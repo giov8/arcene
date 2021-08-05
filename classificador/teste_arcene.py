@@ -1,10 +1,8 @@
 from __future__ import print_function
 import numpy as np
-import os
+#import os
 from sklearn import svm, metrics
 from genetic_selection import GeneticSelectionCV
-
-#from genetic_selection import GeneticSelectionCV
 
 
 def main():
@@ -46,11 +44,11 @@ def main():
                                   n_population=100,
                                   crossover_proba=0.5,
                                   mutation_proba=0.2,
-                                  n_generations=40,
+                                  n_generations=1000,
                                   crossover_independent_proba=0.5,
                                   mutation_independent_proba=0.05,
                                   tournament_size=3,
-                                  n_gen_no_change=10,
+                                  n_gen_no_change=100,
                                   caching=True,
                                   n_jobs=-1)
 

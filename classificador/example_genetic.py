@@ -34,6 +34,9 @@ def main():
     selector = selector.fit(X, y)
 
     print(selector.support_)
+    print(np.count_nonzero(selector.support_))
+
+    #np.size(a) - np.count_nonzero(a)
 
 
 if __name__ == "__main__":

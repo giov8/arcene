@@ -1,30 +1,75 @@
-#svm.py
-#Import scikit-learn dataset library
-from sklearn import datasets
 import numpy as np
+#import os
 from sklearn import svm, metrics
-from sklearn.model_selection import train_test_split
 
 
+def main():
+    # Load dataset
+    f = open('./../dataset/arcene_train.data')
+    X_train = np.fromfile(f, dtype=np.float64, sep=' ')
+    f.close()
+    X_train.resize(100,10000) # reshape data as (n_samples, n_features)
 
-#Load dataset
-cancer = datasets.load_breast_cancer()
+    f = open('./../dataset/arcene_train.labels')
+    y_train = np.fromfile(f, dtype=np.int32, sep=' ')
+    f.close()
 
-# Split dataset into training set and test set
-X_train, X_test, y_train, y_test = train_test_split(cancer.data, cancer.target, test_size=0.3,random_state=109) # 70% training and 30% test
+    f = open('./../dataset/arcene_valid.data')
+    X_test = np.fromfile(f, dtype=np.float64, sep=' ')
+    f.close()
+    X_test.resize(100, 10000) # reshape data as (n_samples, n_features)
 
-#Create a svm Classifier
-clf = svm.SVC(kernel='linear') # Linear Kernel
+    f = open('./../dataset/arcene_valid.labels')
+    y_test = np.fromfile(f, dtype=np.float64, sep=' ')
+    f.close()
 
-#Train the model using the training sets
-clf.fit(X_train, y_train)
 
-#Predict the response for test dataset
-y_pred = clf.predict(X_test)
+    print("Classificação com SVM (sem seleção de features)")
 
-# Model Accuracy: how often is the classifier correct?
-print("Accuracy:",metrics.accuracy_score(y_test, y_pred))
-# Model Precision: what percentage of positive tuples are labeled as such?
-print("Precision:",metrics.precision_score(y_test, y_pred))
-# Model Recall: what percentage of positive tuples are labelled as such?
-print("Recall:",metrics.recall_score(y_test, y_pred))
+    for kernel in ('linear', 'poly', 'rbf', 'sigmoid'):
+        
+        if (kernel=='poly'):
+            for degree in range(2,8):
+                #Create a svm Classifier
+                clf = svm.SVC(kernel=kernel, degree=degree) # Linear Kernel
+
+                #Train the model using the training sets
+                clf.fit(X_train, y_train)
+
+                #Predict the response for test dataset
+                y_pred = clf.predict(X_test)
+
+                print()
+                print("Kernel: ",kernel, "Degree: ",degree)
+
+                # Model Accuracy: how often is the classifier correct?
+                print("Accuracy:",metrics.accuracy_score(y_test, y_pred))
+                # Model Precision: what percentage of positive tuples are labeled as such?
+                print("Precision:",metrics.precision_score(y_test, y_pred))
+                # Model Recall: what percentage of positive tuples are labelled as such?
+                print("Recall:",metrics.recall_score(y_test, y_pred))
+
+        else:
+            #Create a svm Classifier
+            clf = svm.SVC(kernel=kernel)
+            #clf = svm.SVC(kernel=kernel, degree=5) # Linear Kernel
+
+            #Train the model using the training sets
+            clf.fit(X_train, y_train)
+
+            #Predict the response for test dataset
+            y_pred = clf.predict(X_test)
+
+            print()
+            print("Kernel: ",kernel)
+
+            # Model Accuracy: how often is the classifier correct?
+            print("Accuracy:",metrics.accuracy_score(y_test, y_pred))
+            # Model Precision: what percentage of positive tuples are labeled as such?
+            print("Precision:",metrics.precision_score(y_test, y_pred))
+            # Model Recall: what percentage of positive tuples are labelled as such?
+            print("Recall:",metrics.recall_score(y_test, y_pred))
+
+
+if __name__ == "__main__":
+    main()  
