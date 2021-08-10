@@ -1,6 +1,5 @@
 from __future__ import print_function
 import numpy as np
-#import os
 from sklearn import svm, metrics
 from genetic_selection import GeneticSelectionCV
 
@@ -25,46 +24,45 @@ def main():
     y_test = np.fromfile(f, dtype=np.float64, sep=' ')
     f.close()
 
-    print(X_train.shape)
-    print(y_train.size)
-    print(X_test.size)
-    print(y_test.size)
+    filename = 'teste3.csv'
+    print("max_features,n_population,n_generations,accuracy,precision,recall", file=open(filename, 'a'))
 
-    print("Dados Carregados")
+    #Define the tests range
+    max_feat = [100, 500, 1000, 2000, 3000, 4000, 5000, 6000, 7000, 8000, 9000, None]
+    n_pop = [100, 200, 500, 1000, 200, 100, 50, 10, 20, 50, 100]
+    n_gen =[1000, 500, 200, 100, 50, 100, 200, 100, 50, 20, 10]
 
-    #Create a svm Classifier
-    clf = svm.SVC(kernel='linear') # Linear Kernel
+    #Test loop
+    for max_features in max_feat:
+        for i in range (11):
+            print("Max features:", max_features, "N população", n_pop[i], "N geração", n_gen[i])
 
-    #Select features using genetic algorithm
-    selector = GeneticSelectionCV(clf,
-                                  cv=5,
-                                  verbose=1,
-                                  scoring="accuracy",
-                                  max_features=1000,
-                                  n_population=100,
-                                  crossover_proba=0.5,
-                                  mutation_proba=0.2,
-                                  n_generations=1000,
-                                  crossover_independent_proba=0.5,
-                                  mutation_independent_proba=0.05,
-                                  tournament_size=3,
-                                  n_gen_no_change=100,
-                                  caching=True,
-                                  n_jobs=-1)
+            #Create a svm Classifier
+            clf = svm.SVC(kernel='poly', degree=5) # Polynomial Kernel, degree 5
 
-    #Train the model using the training sets
-    selector.fit(X_train, y_train)
+            #Select features using genetic algorithm
+            selector = GeneticSelectionCV(clf,
+                                          verbose=1,
+                                          scoring="accuracy",
+                                          max_features=max_features,
+                                          n_population=n_pop[i],
+                                          crossover_proba=0.5,
+                                          mutation_proba=0.2,
+                                          n_generations=n_gen[i],
+                                          tournament_size=5,
+                                          n_gen_no_change=100,
+                                          caching=True,
+                                          n_jobs=-1)
 
-    #Predict the response for test dataset
-    y_pred = selector.predict(X_test)
+            #Train the model using the training sets
+            selector.fit(X_train, y_train)
 
-    # Model Accuracy: how often is the classifier correct?
-    print("Accuracy:",metrics.accuracy_score(y_test, y_pred))
-    # Model Precision: what percentage of positive tuples are labeled as such?
-    print("Precision:",metrics.precision_score(y_test, y_pred))
-    # Model Recall: what percentage of positive tuples are labelled as such?
-    print("Recall:",metrics.recall_score(y_test, y_pred))
+            #Predict the response for test dataset
+            y_pred = selector.predict(X_test)
+
+            with open(filename, "a") as f:
+                print(max_features, n_pop[i], n_gen[i], metrics.accuracy_score(y_test, y_pred), metrics.precision_score(y_test, y_pred), metrics.recall_score(y_test, y_pred), file=f, sep=',')
 
 
 if __name__ == "__main__":
-    main()  
+    main()

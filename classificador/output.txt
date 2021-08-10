@@ -1,0 +1,9 @@
+Accuracy: 0.85
+Precision: 0.8536585365853658
+Recall: 0.7954545454545454
+Accuracy: 0.82
+Precision: 0.8421052631578947
+Recall: 0.7272727272727273
+Accuracy: 0.83
+Precision: 0.8461538461538461
+Recall: 0.75
